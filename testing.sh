@@ -66,7 +66,7 @@ saveRefIn () {
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        for SOUBOR in $(ls -v testdata_io/custom_input_* 2>/dev/null)
+        for SOUBOR in $(ls -v "testdata_io/custom_input_*" 2>/dev/null)
         do
             REFERVSTUPCUST[$i]="$SOUBOR"
             ((i++))
@@ -134,7 +134,7 @@ testAgRef () {
         do
             printf "$(tucne "Vystup %*d:")" "$pocet" "$i"
             # Porovnavame, pri rozdilu inkrementujeme $chyby
-            ROZDILYCUST[$i]="$(diff  --old-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(zelena ref):") %l%c'\012'" --new-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(cervena " ty"):") %l%c'\012'" --unchanged-line-format "" "$SOUBOR" "${MYVYSTUP[$i]}" 2>/dev/null)"
+            ROZDILYCUST[$i]="$(diff  --old-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(zelena ref):") %l%c'\012'" --new-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(cervena " ty"):") %l%c'\012'" --unchanged-line-format "" "$SOUBOR" "${MYVYSTUPCUST[$i]}" 2>/dev/null)"
             if [ $? == 1 ];
             then
                 printf " $(tucne "$(cervena %6s)")\n" "CHYBA"
