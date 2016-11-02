@@ -1,6 +1,8 @@
 runInAddMode () {
-    ADD="testdata_io"
-    prepareDir "$workdir"
+    prepareDir
+    printf "$(zelena $(tucne %s))\n" "Skript byl spusten v rezimu IO"
+    printf "$(zelena $(tucne %s))\n" "Zadej vzorova vstupni data"
+    readData
     
     
     
@@ -8,9 +10,9 @@ runInAddMode () {
 
 
 prepareDir () {
-    if [ ! -d "$1" ]
+    if [ ! -d "$CUSTOMOUTDIR" ]
     then
-        mkdir "$1"
+        mkdir "$CUSTOMOUTDIR"
         if [ "$?" -ne 0 ]
         then
         term "6" "Nelze vytvorit adresar pro custom data"
@@ -21,16 +23,8 @@ prepareDir () {
 
 
 readData () {
-
-    
-    printf "$(zelena $(tucne %s))\n" "Skript byl spusten v rezimu IO"
-    printf "$(zelena $(tucne %s))\n" "Zadej vzorova vstupni data"
-    
-    NAZEVIN=$(printf "custom_input_%08d.txt" "0")
-    NAZEVOUT=$(printf "custom_output_%08d.txt" "0")
-    
-    i=0
-    for SOUBOR in $(ls -v testdata_io)
+    local i=0
+    for SOUBOR in $(ls -v $CUSTOMOUTDIR)
     do
         if [ "$SOUBOR" = "$NAZEVIN" ]
         then
@@ -44,14 +38,25 @@ readData () {
     
     
     
-    VSTUP=$(cat)
-    printf "%s" "$VSTUP" > "testdata_io/$NAZEVIN"
+    local vstup=$(cat)
+    printf "%s" "$vstup" > "$CUSTOMOUTDIR/$NAZEVIN"
     
+    if [ "$?" -ne 0 ]
+    then
+        term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
+    fi
     
     printf "\n$(zelena $(tucne %s))\n" "Nyni zadej vzorova vystupni data."
     
-    VSTUP=$(cat)
-    printf "%s" "$VSTUP" > "testdata_io/$NAZEVOUT"
+
+    vstup=$(cat)
+    printf "%s" "$vstup" > "$CUSTOMOUTDIR/$NAZEVOUT"
     
-    printf "\n$(zelena $(tucne %s))\n" "Data byla ulozena do \"testdata_io/$NAZEVIN, $NAZEVOUT\""
+    if [ "$?" -ne 0 ]
+    then
+        term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
+    fi
+    
+    
+    printf "\n$(zelena $(tucne %s))\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
 }

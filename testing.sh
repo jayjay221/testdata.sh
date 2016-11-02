@@ -1,15 +1,20 @@
 # Funkce pro terminaci
 makeTempDir () {
     # Vytvorime si tmp adresare pro praci se soubory
-    if  ! mkdir "$TMPDIR" > "/dev/null" 2>&1 ;
+    mkdir "$TMPDIR" > "/dev/null" 2>&1 ;
+    if [ "$?" -ne 0 ]
     then
         term "1" "Nelze vytvorit \"$TMPDIR\""
     fi
-    if  ! mkdir -p "$TMPDIR/referencni_archiv" > "/dev/null" 2>&1 ;
+    
+    mkdir -p "$TMPDIR/referencni_archiv" > "/dev/null" 2>&1
+    if [ "$?" -ne 0 ]
     then
         term "1" "Nelze vytvorit \"$TMPDIR/referencni_archiv\""
     fi
-    if  ! mkdir -p "$TMPDIR/vysledky" > "/dev/null" 2>&1 ;
+    
+    mkdir -p "$TMPDIR/vysledky" > "/dev/null" 2>&1
+    if [ "$?" -ne 0 ]
     then
         term "1" "Nelze vytvorit \"$TMPDIR/vysledky\""
     fi
@@ -17,7 +22,8 @@ makeTempDir () {
 
 unPack () {
     # Rozbalime archiv
-    if  ! tar -C "$TMPDIR/referencni_archiv" -xvf "$ARCHIV" > "/dev/null" 2>&1 ;
+    tar -C "$TMPDIR/referencni_archiv" -xvf "$ARCHIV" > "/dev/null" 2>&1 
+    if [ "$?" -ne 0 ]
     then
         term "2" "Nelze rozbalit \"$ARCHIV\" do \"$TMPDIR/referencni_archiv\""
     fi
@@ -29,7 +35,7 @@ saveRefOut () {
     local i=0
 
     # Postupne si ulozime referencni vystupy do pole
-    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_out.txt);
+    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_out.txt)
     do
         REFERVYS[$i]="$SOUBOR"
         ((i++))
@@ -39,7 +45,7 @@ saveRefOut () {
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        for SOUBOR in $(ls -v testdata_io/custom_output_*);
+        for SOUBOR in $(ls -v testdata_io/custom_output_*)
         do
             REFERVYSCUST[$i]="$SOUBOR"
             ((i++))
@@ -51,7 +57,7 @@ saveRefIn () {
     # To same nyni s vstupy
     local i=0
 
-    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_in.txt);
+    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_in.txt)
     do
         REFERVSTUP[$i]="$SOUBOR"
         ((i++))
@@ -60,7 +66,7 @@ saveRefIn () {
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        for SOUBOR in $(ls -v testdata_io/custom_input_*);
+        for SOUBOR in $(ls -v testdata_io/custom_input_*)
         do
             REFERVSTUPCUST[$i]="$SOUBOR"
             ((i++))
@@ -71,32 +77,34 @@ saveRefIn () {
 saveOurOut () {
     # A jeste s vystupy naseho programu
     local i=0
-
     for SOUBOR in ${REFERVSTUP[*]};
     do
-        ITER=$(printf "%04d" $i)
+        local iter=$(printf "%04d" $i)
         # Nasledujici prikaz potreba osetrit.
-        $PROGRAM < $SOUBOR > "$TMPDIR/vysledky/${ITER}_myout.txt"
-        MYVYSTUP[$i]="$TMPDIR/vysledky/${ITER}_myout.txt"
+        $PROGRAM < $SOUBOR > "$TMPDIR/vysledky/${iter}_myout.txt"
+        MYVYSTUP[$i]="$TMPDIR/vysledky/${iter}_myout.txt"
         ((i++))
     done
     
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        ITER=$(printf "%08d" $i)
-        # Nasledujici prikaz potreba osetrit.
-        $PROGRAM < $SOUBOR > "$TMPDIR/vysledky/${ITER}_cust_myout.txt"
-        MYVYSTUPCUST[$i]="$TMPDIR/vysledky/${ITER}_cust_myout.txt"
-        ((i++))
+        for SOUBOR in ${REFERVSTUPCUST[*]};
+        do
+            local iter=$(printf "%08d" $i)
+            # Nasledujici prikaz potreba osetrit.
+            $PROGRAM < $SOUBOR > "$TMPDIR/vysledky/${iter}_cust_myout.txt"
+            MYVYSTUPCUST[$i]="$TMPDIR/vysledky/${iter}_cust_myout.txt"
+            ((i++))
+        done
     fi   
 }
 
 testAgRef () {
     # Spocitame chyby
-    chyby=0
-    local POCET=${#REFERVYS[@]}
-    POCET=${#POCET}
+    CHYBY=0
+    local pocet=${#REFERVYS[@]}
+    pocet=${#pocet}
     local i=0
     for SOUBOR in ${REFERVYS[*]};
     do
@@ -117,8 +125,8 @@ testAgRef () {
     if [ "$MODE" = "custom" ]
     then
         chybycust=0
-        local POCET=${#REFERVYSCUST[@]}
-        POCET=${#POCET}
+        local pocet=${#REFERVYSCUST[@]}
+        pocet=${#pocet}
         local i=0
         for SOUBOR in ${REFERVYSCUST[*]};
         do
@@ -152,19 +160,22 @@ testAgRef () {
         ((i++))
     done
     
-    for ROZDIL in "${ROZDILYCUST[@]}";
-    do
-        local k=0
-        if [ "$ROZDIL" != "" ];
-        then
-            
-            #echo -e "${colorred}${formatbold}Vystup $((i)) [${coloryellow}$(basename ${REFERVYSCUST[i]})${colorred}]${formatboldreset}${colorreset}"
-            printf "$(tucne "$(cervena "Vystup %d") [$(zluta %s)]")\n" "$k" "$(basename ${REFERVYSCUST[k]})"
-            printf "%s\n" "$ROZDIL"
-            printf "$(zluta %s)\n" "--------------------ddddd---------"
-        fi
-        ((i++))
-    done
+    if [ "$MODE" = "custom" ]
+    then
+        for ROZDIL in "${ROZDILYCUST[@]}";
+        do
+            local k=0
+            if [ "$ROZDIL" != "" ];
+            then
+                
+                #echo -e "${colorred}${formatbold}Vystup $((i)) [${coloryellow}$(basename ${REFERVYSCUST[i]})${colorred}]${formatboldreset}${colorreset}"
+                printf "$(tucne "$(cervena "Vystup %d") [$(zluta %s)]")\n" "$k" "$(basename ${REFERVYSCUST[k]})"
+                printf "%s\n" "$ROZDIL"
+                printf "$(zluta %s)\n" "--------------------ddddd---------"
+            fi
+            ((i++))
+        done
+    fi
 }
 
 

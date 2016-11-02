@@ -1,9 +1,10 @@
+
+
 parseArg () {
 
-    iterateArgs "$@"
     expandArgPaths
     doFilesExist
-    
+
 }
 
 # Funkce testujici existenci a pouzitelnost souboru
@@ -26,6 +27,7 @@ doFilesExist () {
 
 # Rozebereme si kazdej parametr a uplatnime jeho vyznam
 iterateArgs () {
+
     while [ -n "$1" ]
     do
         case "$1" in
@@ -41,6 +43,7 @@ iterateArgs () {
         *".tgz")
             ARCHIV="$1"
             ;;
+        esac
         
         shift
     done
