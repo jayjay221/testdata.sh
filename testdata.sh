@@ -26,6 +26,7 @@ declare -a REFERVYSCUST
 declare -a MYVYSTUPCUST
 
 declare -a ROZDILY
+declare -a ROZDILYCUST
 
 # Uvodni zprava
 welcome
@@ -35,7 +36,6 @@ iterateArgs "$@"
 case "$MODE" in
     "add")
         runInAddMode
-        exit
         ;;
     *)
         runInStandardMode

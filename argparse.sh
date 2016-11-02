@@ -53,12 +53,12 @@ iterateArgs () {
 expandArgPaths () {
     
     # Domyslime si parametry, kdyz je nikdo nezadal
-    if [ ! -z "$ARCHIV" ];
+    if [ -z "$ARCHIV" ];
     then 
         ARCHIV="sample.tgz"
     fi
 
-    if [ ! -z "$PROGRAM" ];
+    if [ -z "$PROGRAM" ];
     then
         PROGRAM="./a.out"
     fi

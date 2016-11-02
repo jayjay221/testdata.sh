@@ -1,5 +1,6 @@
 term () {
     chyba "$2"
+    removeTempDir
     exit "$1"
 }
 
@@ -10,3 +11,4 @@ welcome () {
     printf "$(modra "%s %s")\n" "$AUTOR" "$ROK"
     printf "$(modra %s)\n" "$URL"
 }
+
