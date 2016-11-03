@@ -11,6 +11,10 @@ git clone https://github.com/jayjay221/testdata.sh
 
 Then run `testdata.sh` in the directory.
 
+```bash
+cd testdata.sh
+./testdata.sh
+
 You can run the script without arguments - it will look for compiled source "a.out" and archive with reference outputs "sample.tgz" in current directory.
 
 Paths to compiled source and archive can be added as arguments.
@@ -19,9 +23,9 @@ Paths to compiled source and archive can be added as arguments.
 ./tesdata.sh path_to_executable path_to_tar.gz
 ```
 
-If you are too lazy to move the script to every directory you are debugging your program in, consider creating a symlink.
+If you are too lazy to move the script to every directory you are debugging your program in, consider creating an alias.
 
-Run this code from the cloned directory.
+Put this piece of code in your .bashrc
 
 ```bash
 sudo ln -s /usr/bin/testdata tesdata.sh

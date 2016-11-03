@@ -1,12 +1,14 @@
 #!/bin/bash
 
-source formatting.sh
-source meta.sh
-source argparse.sh
-source read.sh
-source testing.sh
-source additional.sh
-source standard.sh
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+source $SCRIPTDIR/formatting.sh
+source $SCRIPTDIR/meta.sh
+source $SCRIPTDIR/argparse.sh
+source $SCRIPTDIR/read.sh
+source $SCRIPTDIR/testing.sh
+source $SCRIPTDIR/additional.sh
+source $SCRIPTDIR/standard.sh
 
 # Globalni promenne
 TMPDIR="/tmp/testdata"
