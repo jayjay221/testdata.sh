@@ -57,7 +57,7 @@ saveRefIn () {
     # To same nyni s vstupy
     local i=0
 
-    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_in.txt)
+    for SOUBOR in $(ls -v $TMPDIR/referencni_archiv/CZE/*_in.txt 2>/dev/null)
     do
         REFERVSTUP[$i]="$SOUBOR"
         ((i++))
@@ -66,7 +66,7 @@ saveRefIn () {
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        for SOUBOR in $(ls -v "testdata_io/custom_input_*" 2>/dev/null)
+        for SOUBOR in $(ls -v testdata_io/custom_input_* 2>/dev/null)
         do
             REFERVSTUPCUST[$i]="$SOUBOR"
             ((i++))
@@ -77,7 +77,7 @@ saveRefIn () {
 saveOurOut () {
     # A jeste s vystupy naseho programu
     local i=0
-    for SOUBOR in ${REFERVSTUP[*]};
+    for SOUBOR in "${REFERVSTUP[@]}"
     do
         local iter=$(printf "%04d" $i)
         # Nasledujici prikaz potreba osetrit.
@@ -89,7 +89,7 @@ saveOurOut () {
     if [ "$MODE" = "custom" ]
     then
         local i=0
-        for SOUBOR in ${REFERVSTUPCUST[*]};
+        for SOUBOR in "${REFERVSTUPCUST[@]}"
         do
             local iter=$(printf "%08d" $i)
             # Nasledujici prikaz potreba osetrit.
@@ -139,7 +139,7 @@ testAgRef () {
             then
                 printf " $(tucne "$(cervena %6s)")\n" "CHYBA"
                 ((CHYBYCUST++))
-            else
+            else 
                 ROZDILYCUST[$i]=""
                 printf " $(tucne "$(zelena %3s)")\n" "OK"
             fi
@@ -150,6 +150,7 @@ testAgRef () {
     printf "$(tucne $(tyrkysova %s))\n" "--------------"
     
     local i=0
+    #  "${MYVYSTUPCUST[0]}"
     for ROZDIL in "${ROZDILY[@]}";
     do
         if [ "$ROZDIL" != "" ];
