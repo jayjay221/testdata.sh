@@ -29,7 +29,7 @@ If you are too lazy to move the script to every directory you are debugging your
 Put this piece of code in your .bashrc
 
 ```bash
-sudo ln -s /usr/bin/testdata tesdata.sh
+alias testdata="path_to_cloned_repo/testdata.sh"
 ```
 
 Then you can run the script the same way you would run installed programs from any directory.
