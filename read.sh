@@ -24,9 +24,9 @@ prepareDir () {
 
 readData () {
     local i=0
-    for SOUBOR in $(ls -v $CUSTOMOUTDIR)
+    for soubor in $(ls -v $CUSTOMOUTDIR)
     do
-        if [ "$SOUBOR" = "$NAZEVIN" ]
+        if [ "$soubor" = "$NAZEVIN" ]
         then
             ((i++))
             NAZEVIN=$(printf "custom_input_%08d.txt" "$i")

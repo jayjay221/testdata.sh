@@ -5,9 +5,9 @@ term () {
 }
 
 welcome () {
-    local NAZEV="Testovaci skript pro PA1"
+    local nazev="Testovaci skript pro PA1"
     
-    printf "$(tyrkysova "$(tucne %s) %s")\n" "$NAZEV" "$VERZE"
+    printf "$(tyrkysova "$(tucne %s) %s")\n" "$nazev" "$VERZE"
     printf "$(modra "%s %s")\n" "$AUTOR" "$ROK"
     printf "$(modra %s)\n" "$URL"
 }
