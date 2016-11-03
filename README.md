@@ -14,6 +14,7 @@ Then run `testdata.sh` in the directory.
 ```bash
 cd testdata.sh
 ./testdata.sh
+```
 
 You can run the script without arguments - it will look for compiled source "a.out" and archive with reference outputs "sample.tgz" in current directory.
 
