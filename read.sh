@@ -38,24 +38,49 @@ readData () {
     
     
     
-    local vstup=$(cat)
-    printf "%s" "$vstup" > "$CUSTOMOUTDIR/$NAZEVIN"
+    
+    > "$CUSTOMOUTDIR/$NAZEVIN"
     
     if [ "$?" -ne 0 ]
     then
         term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     fi
+    
+    while read line
+    do
+    if [ "$line" != "" ]
+    then
+        printf "%s\n" "$line" >> "$CUSTOMOUTDIR/$NAZEVIN"
+    fi
+    done
+
+    
+    
+    #local vstup=$(cat)
+    #printf "%s" "$vstup" > "$CUSTOMOUTDIR/$NAZEVIN"
+    
+    #if [ "$?" -ne 0 ]
+    #then
+    #    term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
+    #fi
     
     printf "\n$(zelena $(tucne %s))\n" "Nyni zadej vzorova vystupni data."
     
-
-    vstup=$(cat)
-    printf "%s" "$vstup" > "$CUSTOMOUTDIR/$NAZEVOUT"
     
+    > "$CUSTOMOUTDIR/$NAZEVOUT"
+
     if [ "$?" -ne 0 ]
     then
         term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     fi
+    
+    while read line
+    do
+    if [ "$line" != "" ]
+    then
+        printf "%s\n" "$line" >> "$CUSTOMOUTDIR/$NAZEVOUT"
+    fi
+    done
     
     
     printf "\n$(zelena $(tucne %s))\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
