@@ -7,9 +7,9 @@ term () {
 welcome () {
     local nazev="Testovaci skript pro PA1"
     
-    printf "$(tyrkysova "$(tucne %s) %s")\n" "$nazev" "$VERZE"
-    printf "$(modra "%s %s")\n" "$AUTOR" "$ROK"
-    printf "$(modra %s)\n" "$URL"
+    printf "${BLUE}${BOLD}%s %s${NORMAL}\n" "$nazev" "$VERZE"
+    printf "${BLUE}%s %s${NORMAL}\n" "$AUTOR" "$ROK"
+    printf "${BLUE}%s${NORMAL}\n" "$URL"
 }
 
 ctrl_c () {

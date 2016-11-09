@@ -77,7 +77,7 @@ saveOurOut () {
     for soubor in "${REFERVSTUP[@]}" # Projdeme kazdy nazev souboru v poli
     do
         local iter=$(printf "%04d" $i) # Vytvorime formatovanou hodnotu iterace
-        $PROGRAM < $soubor > "$TMPDIR/vysledky/${iter}_myout.txt" # Posleme do naseho programu aktualni soubor z pole a vysledek ulozime do docasneho adresare
+        TIMING[i]=$(time ($PROGRAM < $soubor > "$TMPDIR/vysledky/${iter}_myout.txt") 2>&1 1>/dev/null) # | cut -f2 | head -n1) # Posleme do naseho programu aktualni soubor z pole a vysledek ulozime do docasneho adresare
         MYVYSTUP[$i]="$TMPDIR/vysledky/${iter}_myout.txt" # Jmeno vytvoreneho souboru si ulozime do pole
         ((i++))
     done
@@ -91,7 +91,7 @@ saveOurOut () {
         do
             iter=$(printf "%08d" $i)
             # Nasledujici prikaz potreba osetrit.
-            $PROGRAM < $soubor > "$TMPDIR/vysledky/${iter}_cust_myout.txt"
+            TIMINGCUST[i]=$(time ($PROGRAM < $soubor > "$TMPDIR/vysledky/${iter}_cust_myout.txt") 2>&1 1>/dev/null)
             MYVYSTUPCUST[$i]="$TMPDIR/vysledky/${iter}_cust_myout.txt"
             ((i++))
         done
@@ -102,24 +102,28 @@ saveOurOut () {
 testAgRef () {
     CHYBY=0 # Nastavime globalni promennou s poctem chyb
     # Nasleduje pokus o esteticke formatovani finalniho vystupu
-    local pocet="${#REFERVYS[@]}" # notace '${#foo}' vypise ?pocet pismen? pro obycejnou promennou a pocet prvku v poli
-    pocet=${#pocet} # Pocet cifer v prvcich pole
+    #setField "2" # notace '${#foo}' vypise ?pocet pismen? pro obycejnou promennou a pocet prvku v poli
+    
+    printf -v LINEWIDTH "%*s" "$((FIELDWIDTH[0]+FIELDWIDTH[1]+FIELDWIDTH[2]+FIELDWIDTH[3]+1))"
+
+    
     local i=0
-    printf "$(tucne $(zluta %s))\n" "Testy z archivu" # Vytiskneme nadpis predchazejici vysledky testu proti referenci
+    printLine
+    printf "${BOLD}${YELLOW}%s${NORMAL}\n" "Testy z archivu" # Vytiskneme nadpis predchazejici vysledky testu proti referenci
     for soubor in "${REFERVYS[@]}" # Iterujeme referencnimi vystupy
     do
-        printf "$(tucne "Vystup %*d:")" "$pocet" "$i" # Vytiskneme radky obsahujici vysledky jednotlivych testu
+        printf "${BOLD}%*s${CYAN}%*d${NORMAL}${BOLD}%s${NORMAL}" "${FIELDWIDTH[0]}" "Vystup" "${FIELDWIDTH[1]}" "$i" ":" # Vytiskneme radky obsahujici vysledky jednotlivych testu
         # Budeme porovnavat, pri rozdilu inkrementujeme $chyby
         # Je pouzit diff s custom formatovanim
         # Vysledny rozdil je zapsan do pole
-        ROZDILY[$i]="$(diff  --old-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(zelena ref):") %l%c'\012'" --new-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(cervena " ty"):") %l%c'\012'" --unchanged-line-format "" "$soubor" "${MYVYSTUP[$i]}" 2>/dev/null)"
+        ROZDILY[$i]="$(diff  --old-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}]${GREEN}ref${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --new-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}] ${RED}ty${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --unchanged-line-format "" "$soubor" "${MYVYSTUP[$i]}" 2>/dev/null)"
         if [ $? == 1 ] # Diff konci s kodem 1, kdyz nalezne rozdil
         then
-            printf " $(tucne "$(cervena %6s)")\n" "CHYBA"
+            printf "%*s%*s\n" "${FIELDWIDTH[2]}" "CHYBA" "${FIELDWIDTH[3]}" "${TIMING[i]}"
             ((CHYBY++))
         else
             ROZDILY[$i]="" # Nejsem si jisty, jestli je toto nutne
-            printf " $(tucne "$(zelena %3s)")\n" "OK"
+            printf "${GREEN}${BOLD}%*s${NORMAL}${BLUE}%*s${NORMAL}\n" "${FIELDWIDTH[2]}" "OK" "${FIELDWIDTH[3]}" "[${TIMING[i]}]"
         fi
         ((i++))
     done
@@ -128,27 +132,28 @@ testAgRef () {
     then
         # Nasledujici cast kodu se shoduje s predchozi, pouze pracuje s vlastnimi vstupy a vystupy
         CHYBYCUST=0
-        pocet="${#REFERVYSCUST[@]}"
-        pocet=${#pocet}
+        #setField "2"
         i=0
-        printf "$(tucne $(zluta %s))\n" "Vlastni testy"
+        printLine
+        printf "${YELLOW}${BOLD}%s${NORMAL}\n" "Vlastni testy"
         for soubor in "${REFERVYSCUST[@]}"
         do
-            printf "$(tucne "Vystup %*d:")" "$pocet" "$i"
-            ROZDILYCUST[$i]="$(diff  --old-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(zelena ref):") %l%c'\012'" --new-line-format "$(tucne "[$(tyrkysova "%-1dn")]$(cervena " ty"):") %l%c'\012'" --unchanged-line-format "" "$soubor" "${MYVYSTUPCUST[$i]}" 2>/dev/null)"
+            printf "${BOLD}%*s${CYAN}%*d${NORMAL}${BOLD}%s${NORMAL}" "${FIELDWIDTH[0]}" "Vystup" "${FIELDWIDTH[1]}" "$i" ":"
+            ROZDILYCUST[$i]="$(diff  --old-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}]${GREEN}ref${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --new-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}] ${RED}ty${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --unchanged-line-format "" "$soubor" "${MYVYSTUPCUST[$i]}" 2>/dev/null)"
             if [ $? == 1 ];
             then
-                printf " $(tucne "$(cervena %6s)")\n" "CHYBA"
+                printf "${RED}${BOLD}%*s${NORMAL}${BLUE}%*s${NORMAL}\n" "${FIELDWIDTH[2]}" "CHYBA" "${FIELDWIDTH[3]}" "[${TIMINGCUST[i]}]"
                 ((CHYBYCUST++))
             else 
                 ROZDILYCUST[$i]=""
-                printf " $(tucne "$(zelena %3s)")\n" "OK"
+                printf "${GREEN}${BOLD}%*s${NORMAL}${BLUE}%*s${NORMAL}\n" "${FIELDWIDTH[2]}" "OK" "${FIELDWIDTH[3]}" "[${TIMINGCUST[i]}]"
             fi
             ((i++))
         done
     fi
 
-    printf "$(tucne $(tyrkysova %s))\n" "--------------" # Oddelovac
+    printLine
+
     
     i=0
     # Podivame se na jednotlive rozdily
@@ -157,9 +162,9 @@ testAgRef () {
         if [ "$rozdil" != "" ] # Pokud je rozdil prazdny
         then
             # Vypiseme nadpis, obsah a oddelovac
-            printf "$(tucne "[$(cervena progtest)]$(cervena "Vystup %d") [$(zluta %s)]")\n" "$i" "$(basename ${REFERVYS[i]})"
+            printf "${BOLD}[${RED}progtest${NORMAL}${BOLD}] ${RED}Vystup ${CYAN}%d ${NORMAL}${BOLD}[${YELLOW}%s${NORMAL}${BOLD}]${NORMAL}\n" "$i" "$(basename ${REFERVYS[i]})"
             printf "%s\n" "$rozdil"
-            printf "$(zluta %s)\n" "-----------------------------"
+            printLine
         fi
         ((i++))
     done
@@ -172,9 +177,9 @@ testAgRef () {
             if [ "$rozdil" != "" ]
             then
                 
-                printf "$(tucne "[$(zluta vlastni)] $(cervena "Vystup %d") [$(zluta %s)]")\n" "$i" "$(basename ${REFERVYSCUST[i]})"
+                printf "${BOLD}[${YELLOW}vlastni${NORMAL}${BOLD}] ${RED}Vystup ${CYAN}%d ${NORMAL}${BOLD}[${YELLOW}%s${NORMAL}${BOLD}]${NORMAL}\n" "$i" "$(basename ${REFERVYSCUST[i]})"
                 printf "%s\n" "$rozdil"
-                printf "$(zluta %s)\n" "-----------------------------"
+                printLine
             fi
             ((i++))
         done
@@ -185,11 +190,10 @@ testAgRef () {
 printRes () {
     if [ $((CHYBY+CHYBYCUST)) == 0 ] # Pokud nejsou zadne chyby
     then
-        printf "$(tucne $(zelena %s))\n" "vse je v poradku"
+        printf "%s\n" "vse je v poradku"
     else
-        printf "$(tucne $(tyrkysova %s))\n" "--------------"
         # Vypiseme nespokojenou hlasku obsahujici kolik chyb bylo nalezeno a kde
-        printf "$(tucne "$(cervena "%d vystupu nesedi") ($(zluta %d) archiv, $(zluta %d) vlastni)")\n" "$((CHYBY+CHYBYCUST))" "$CHYBY" "$CHYBYCUST"
+        printf "%d vystupu nesedi (%d archiv, %d) vlastni)\n" "$((CHYBY+CHYBYCUST))" "$CHYBY" "$CHYBYCUST"
     fi
 }
 
