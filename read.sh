@@ -1,7 +1,7 @@
 runInAddMode () {
     prepareDir
-    printf "$(zelena $(tucne %s))\n" "Skript byl spusten v rezimu IO"
-    printf "$(zelena $(tucne %s))\n" "Zadej vzorova vstupni data"
+    printf "${MAGENTA}%s${NORMAL}\n" "Skript byl spusten v rezimu IO"
+    printf "${MAGENTA}%s${NORMAL}\n" "Zadej vzorova vstupni data"
     readData
     
     
@@ -64,7 +64,7 @@ readData () {
     #    term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     #fi
     
-    printf "\n$(zelena $(tucne %s))\n" "Nyni zadej vzorova vystupni data."
+    printf "\n${GREEN}%s${NORMAL}\n" "Nyni zadej vzorova vystupni data."
     
     
     > "$CUSTOMOUTDIR/$NAZEVOUT"
@@ -83,5 +83,5 @@ readData () {
     done
     
     
-    printf "\n$(zelena $(tucne %s))\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
+    printf "\n${GREEN}%s${NORMAL}\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
 }
