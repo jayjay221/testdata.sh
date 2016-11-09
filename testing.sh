@@ -109,7 +109,7 @@ testAgRef () {
     
     local i=0
     printLine
-    printf "${BOLD}${YELLOW}%s${NORMAL}\n" "Testy z archivu" # Vytiskneme nadpis predchazejici vysledky testu proti referenci
+    printf "${BOLD}${YELLOW}%s${NORMAL}\n\n" "Testy z archivu:" # Vytiskneme nadpis predchazejici vysledky testu proti referenci
     for soubor in "${REFERVYS[@]}" # Iterujeme referencnimi vystupy
     do
         printf "${BOLD}%*s${CYAN}%*d${NORMAL}${BOLD}%s${NORMAL}" "${FIELDWIDTH[0]}" "Vystup" "${FIELDWIDTH[1]}" "$i" ":" # Vytiskneme radky obsahujici vysledky jednotlivych testu
@@ -135,7 +135,7 @@ testAgRef () {
         #setField "2"
         i=0
         printLine
-        printf "${YELLOW}${BOLD}%s${NORMAL}\n" "Vlastni testy"
+        printf "${YELLOW}${BOLD}%s${NORMAL}\n\n" "Vlastni testy:"
         for soubor in "${REFERVYSCUST[@]}"
         do
             printf "${BOLD}%*s${CYAN}%*d${NORMAL}${BOLD}%s${NORMAL}" "${FIELDWIDTH[0]}" "Vystup" "${FIELDWIDTH[1]}" "$i" ":"
@@ -157,6 +157,11 @@ testAgRef () {
     
     i=0
     # Podivame se na jednotlive rozdily
+    if [ $((CHYBY+CHYBYCUST)) -gt 0 ]
+    then
+      printf "${BOLD}${RED}%s${NORMAL}\n\n" "Chybne vystupy:"
+    fi
+    
     for rozdil in "${ROZDILY[@]}" # Iterujeme vsemi rozdily
     do
         if [ "$rozdil" != "" ] # Pokud je rozdil prazdny
@@ -190,10 +195,10 @@ testAgRef () {
 printRes () {
     if [ $((CHYBY+CHYBYCUST)) == 0 ] # Pokud nejsou zadne chyby
     then
-        printf "%s\n" "vse je v poradku"
+        printf "${GREEN}${BOLD}%s${NORMAL}\n" "vse je v poradku"
     else
         # Vypiseme nespokojenou hlasku obsahujici kolik chyb bylo nalezeno a kde
-        printf "%d vystupu nesedi (%d archiv, %d) vlastni)\n" "$((CHYBY+CHYBYCUST))" "$CHYBY" "$CHYBYCUST"
+        printf "${BOLD}${CYAN}%d ${RED}vystupu nesedi (${CYAN}%d ${RED}archiv, ${CYAN}%d${RED} ${YELLOW}vlastni${RED})${NORMAL}\n" "$((CHYBY+CHYBYCUST))" "$CHYBY" "$CHYBYCUST"
     fi
 }
 

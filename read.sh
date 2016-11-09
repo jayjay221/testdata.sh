@@ -1,7 +1,7 @@
 runInAddMode () {
     prepareDir
-    printf "${MAGENTA}%s${NORMAL}\n" "Skript byl spusten v rezimu IO"
-    printf "${MAGENTA}%s${NORMAL}\n" "Zadej vzorova vstupni data"
+    #printf "${MAGENTA}%s${NORMAL}\n" "Skript byl spusten v rezimu IO"
+    #printf "${MAGENTA}%s${NORMAL}\n" "Zadej vzorova vstupni data"
     readData
     
     
@@ -37,6 +37,11 @@ readData () {
     done
     
     
+    if ! hash "$EDITOR"
+    then
+      term "9" "Pro spusteni add rezimu je potreba mit v promenne \$EDITOR spustitelny editor textovych souboru"
+    fi
+    
     
     
     > "$CUSTOMOUTDIR/$NAZEVIN"
@@ -46,13 +51,12 @@ readData () {
         term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     fi
     
-    while read line
-    do
-    if [ "$line" != "" ]
-    then
-        printf "%s\n" "$line" >> "$CUSTOMOUTDIR/$NAZEVIN"
-    fi
-    done
+    
+    
+    
+    
+    
+    $EDITOR "$CUSTOMOUTDIR/$NAZEVIN"
 
     
     
@@ -64,24 +68,27 @@ readData () {
     #    term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     #fi
     
-    printf "\n${GREEN}%s${NORMAL}\n" "Nyni zadej vzorova vystupni data."
+    #printf "\n${GREEN}%s${NORMAL}\n" "Nyni zadej vzorova vystupni data."
+    
     
     
     > "$CUSTOMOUTDIR/$NAZEVOUT"
-
+    
     if [ "$?" -ne 0 ]
     then
         term "7" "Nelze zapisovat do \"$CUSTOMOUTDIR\""
     fi
     
-    while read line
-    do
-    if [ "$line" != "" ]
-    then
-        printf "%s\n" "$line" >> "$CUSTOMOUTDIR/$NAZEVOUT"
-    fi
-    done
+    
+    $EDITOR "$CUSTOMOUTDIR/$NAZEVOUT"
     
     
-    printf "\n${GREEN}%s${NORMAL}\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
+   
+    printf "${GREEN}%s${NORMAL}\n" "Data byla ulozena do \"$CUSTOMOUTDIR/$NAZEVIN, $NAZEVOUT\""
+
+  
+    
+    
+    
+    
 }
