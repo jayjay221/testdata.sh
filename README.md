@@ -38,6 +38,14 @@ Then you can run the script the same way you would run installed programs from a
 testdata path_to_executable path_to_tar.gz
 ```
 
+## add mode
+
+Your own custom IO can be imported with `./testdata.sh add` or `testdata add` (linked executable).
+
+Then you will be prompted to enter the data using editor of your choice (EDITOR env. var)
+
+Data are saved locally in `testdata_io` directory.
+
 ## Screenshots
 
 ![screenshot1](https://github.com/jayjay221/testdata.sh/blob/master/screenshot1.png?raw=true)
