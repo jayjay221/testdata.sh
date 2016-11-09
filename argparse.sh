@@ -1,6 +1,6 @@
 
 
-parseArg () {
+parsePaths () {
 
     expandArgPaths
     doFilesExist

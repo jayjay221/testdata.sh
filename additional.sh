@@ -12,3 +12,8 @@ welcome () {
     printf "$(modra %s)\n" "$URL"
 }
 
+ctrl_c () {
+        term 5 "Skript nasilne ukoncen. Odstranuji \"$TMPDIR\""
+        
+}
+

@@ -1,7 +1,14 @@
 #!/bin/bash
 
+# Adresar tohoto souboru
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+
+
+# Odchyceni nasilneho ukonceni
+trap ctrl_c INT
+
+# Vlozene zdrojove kody obsahujici funkce - prehlednejsi kod
 source $SCRIPTDIR/formatting.sh
 source $SCRIPTDIR/meta.sh
 source $SCRIPTDIR/argparse.sh
@@ -10,22 +17,25 @@ source $SCRIPTDIR/testing.sh
 source $SCRIPTDIR/additional.sh
 source $SCRIPTDIR/standard.sh
 
+
 # Globalni promenne
-TMPDIR="/tmp/testdata"
-MODE=""
-ARCHIV=""
-PROGRAM=""
-CUSTOMOUTDIR="testdata_io"
-NAZEVIN=$(printf "custom_input_%08d.txt" "0")
-NAZEVOUT=$(printf "custom_output_%08d.txt" "0")
+TMPDIR="/tmp/testdata" # Adresar pro docasne soubory
+MODE="" # Rezim
+ARCHIV="" # Cesta k archivu s referencnimi daty
+PROGRAM="" # Cesta ke spustitelnemu souboru
+CUSTOMOUTDIR="testdata_io" # Nazev adresare pro vlastni data
+NAZEVIN=$(printf "custom_input_%08d.txt" "0") # Format nazvu vlastniho vstupu
+NAZEVOUT=$(printf "custom_output_%08d.txt" "0") # Format nazvu vlastniho vystupu
 CHYBY=0
 CHYBYCUST=0
 
-declare -a REFERVYS
-declare -a REFERVSTUP
-declare -a MYVYSTUP
-declare -a ROZDILY
-
+# Deklarace poli pro praci s vstupy a vystupy
+  # Vychozi testy
+declare -a REFERVYS # Referencni vystupy
+declare -a REFERVSTUP # Referencni vstupy
+declare -a MYVYSTUP # Nase vystupy
+declare -a ROZDILY # Rozdily mezi ref. a nasimi vystupy
+  # Vlastni (custom) testy
 declare -a REFERVSTUPCUST
 declare -a REFERVYSCUST
 declare -a MYVYSTUPCUST
@@ -34,13 +44,15 @@ declare -a ROZDILYCUST
 # Uvodni zprava
 welcome
 
+# Parsovani argumentu
 iterateArgs "$@"
 
+# Spustime skript podle rezimu nastavenem v argumentu
 case "$MODE" in
-    "add")
+    "add") # Rezim pridavani dat
         runInAddMode
         ;;
-    *)
+    *)  # Standardni rezim
         runInStandardMode
         ;;
 esac
