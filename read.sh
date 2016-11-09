@@ -37,7 +37,7 @@ readData () {
     done
     
     
-    if ! hash "$EDITOR"
+    if ! hash "$EDITOR" 2>&1 1>/dev/null
     then
       term "9" "Pro spusteni add rezimu je potreba mit v promenne \$EDITOR spustitelny editor textovych souboru"
     fi
