@@ -73,12 +73,14 @@ saveRefIn () {
 
 # Funkce pro ulozeni naseho vystupu
 saveOurOut () {
+    #notify-send "$PROGRAM"
     local i=0 # Promenna iteraci
     for soubor in "${REFERVSTUP[@]}" # Projdeme kazdy nazev souboru v poli
     do
         local iter=$(printf "%04d" $i) # Vytvorime formatovanou hodnotu iterace
         TIMING[i]=$(time ($PROGRAM < $soubor > "$TMPDIR/vysledky/${iter}_myout.txt") 2>&1 1>/dev/null) # | cut -f2 | head -n1) # Posleme do naseho programu aktualni soubor z pole a vysledek ulozime do docasneho adresare
         MYVYSTUP[$i]="$TMPDIR/vysledky/${iter}_myout.txt" # Jmeno vytvoreneho souboru si ulozime do pole
+        #cat "${MYVYSTUP[$i]}"
         ((i++))
     done
     
@@ -100,13 +102,13 @@ saveOurOut () {
 
 # Funkce testujici vysledky proti referenci
 testAgRef () {
+  
     CHYBY=0 # Nastavime globalni promennou s poctem chyb
     # Nasleduje pokus o esteticke formatovani finalniho vystupu
     #setField "2" # notace '${#foo}' vypise ?pocet pismen? pro obycejnou promennou a pocet prvku v poli
     
     printf -v LINEWIDTH "%*s" "$((FIELDWIDTH[0]+FIELDWIDTH[1]+FIELDWIDTH[2]+FIELDWIDTH[3]+1))"
 
-    
     local i=0
     printLine
     printf "${BOLD}${YELLOW}%s${NORMAL}\n\n" "Testy z archivu:" # Vytiskneme nadpis predchazejici vysledky testu proti referenci
@@ -117,6 +119,7 @@ testAgRef () {
         # Je pouzit diff s custom formatovanim
         # Vysledny rozdil je zapsan do pole
         ROZDILY[$i]="$(diff  --old-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}]${GREEN}ref${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --new-line-format "${BOLD}[${CYAN}%-1dn${NORMAL}${BOLD}] ${RED}ty${NORMAL}${BOLD}: ${NORMAL}%l%c'\012'" --unchanged-line-format "" "$soubor" "${MYVYSTUP[$i]}" 2>/dev/null)"
+        #echo "${ROZDILY[$i]}"
         if [ $? == 1 ] # Diff konci s kodem 1, kdyz nalezne rozdil
         then
             printf "%*s%*s\n" "${FIELDWIDTH[2]}" "CHYBA" "${FIELDWIDTH[3]}" "${TIMING[i]}"
