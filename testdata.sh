@@ -16,6 +16,7 @@ source $SCRIPTDIR/read.sh
 source $SCRIPTDIR/testing.sh
 source $SCRIPTDIR/additional.sh
 source $SCRIPTDIR/standard.sh
+source $SCRIPTDIR/watchdog.sh
 
 
 # Globalni promenne
@@ -23,6 +24,7 @@ TMPDIR="/tmp/testdata" # Adresar pro docasne soubory
 MODE="" # Rezim
 ARCHIV="" # Cesta k archivu s referencnimi daty
 PROGRAM="" # Cesta ke spustitelnemu souboru
+WDFILE=""
 CUSTOMOUTDIR="testdata_io" # Nazev adresare pro vlastni data
 NAZEVIN=$(printf "custom_input_%08d.txt" "0") # Format nazvu vlastniho vstupu
 NAZEVOUT=$(printf "custom_output_%08d.txt" "0") # Format nazvu vlastniho vystupu
@@ -62,6 +64,9 @@ iterateArgs "$@"
 case "$MODE" in
     "add") # Rezim pridavani dat
         runInAddMode
+        ;;
+    "watchdog")
+        runInWDMode
         ;;
     *)  # Standardni rezim
         runInStandardMode

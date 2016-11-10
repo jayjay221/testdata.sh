@@ -210,5 +210,5 @@ removeTempDir () {
     then
         term "4" "Nelze smazat \"$TMPDIR\"" # Terminace
     fi
-    exit 0
+    #exit 0
 }

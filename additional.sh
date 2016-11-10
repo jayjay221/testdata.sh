@@ -13,7 +13,7 @@ welcome () {
 }
 
 ctrl_c () {
-        term 5 "Skript nasilne ukoncen. Odstranuji \"$TMPDIR\""
+        term 5 "Skript nasilne ukoncen"
         
 }
 
