@@ -1,7 +1,8 @@
 runInWDMode () {
   parsePaths
   
-  printf "${BOLD}${MAGENTA}%s${NORMAL}\n" "Skript bezi v rezimu watchdog. Sledovany soubor: $WDFILE"
+  printf "${BOLD}${MAGENTA}%s${NORMAL}\n" \
+  "Skript bezi v rezimu watchdog. Sledovany soubor: $WDFILE"
   
   
   inotifywait -q -m -e moved_to . |
@@ -12,7 +13,8 @@ runInWDMode () {
 }
 
 fileSaved () {
-  if ! gcc -Wall -pedantic -Wno-long-long -lm "$WDFILE" -o "temp.out" 1>&2 2>/dev/null
+  if ! gcc -Wall -pedantic -Wno-long-long -lm \
+  "$WDFILE" -o "temp.out" 1>&2 2>/dev/null
   then
     notify-send -i "computer-fail" -t 2000 "Chyba pri kompilaci. ($?)"
 
@@ -28,10 +30,13 @@ fileSaved () {
     
     if [ $((CHYBY+CHYBYCUST)) == 0 ] # Pokud nejsou zadne chyby
     then
-      notify-send -i "info" -t 2000 "Uspech" "Program prosel vsechny testy."
+      notify-send -i "info" -t 2000 "Uspech" \
+      "Program prosel vsechny testy."
     else
-      # Vypiseme nespokojenou hlasku obsahujici kolik chyb bylo nalezeno a kde
-      notify-send -i "error" -t 2000 "Neuspech" "$CHYBY chyb z reference, $CHYBYCUST chyb z vlastnich testu."
+      # Vypiseme nespokojenou hlasku obsahujici kolik chyb bylo \
+      nalezeno a kde
+      notify-send -i "error" -t 2000 "Neuspech" \
+      "$CHYBY chyb z reference, $CHYBYCUST chyb z vlastnich testu."
 
     fi
   fi
